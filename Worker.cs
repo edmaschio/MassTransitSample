@@ -19,7 +19,7 @@ namespace MassTransitSample
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await _bus.Publish(new Message { Text = $"A hora é {DateTimeOffset.Now}" });
+                await _bus.Publish(new Message { Text = $"A hora é {DateTimeOffset.Now}"}, stoppingToken);
                 await Task.Delay(1000, stoppingToken);
             }
         }

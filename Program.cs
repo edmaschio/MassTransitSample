@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MassTransit;
@@ -23,7 +20,22 @@ namespace MassTransitSample
                     {
                         x.AddConsumer<MessageConsumer>();
 
-                        x.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
+                        //x.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
+
+                        x.UsingRabbitMq((context, cfg) =>
+                        {
+                            cfg.Host
+                            (
+                                new Uri(hostContext.Configuration["RabbitMQ:Uri"]),
+                                hostdata =>
+                                {
+                                    hostdata.Username(hostContext.Configuration["RabbitMQ:Username"]);
+                                    hostdata.Password(hostContext.Configuration["RabbitMQ:Password"]);
+                                }
+                            );
+
+                            cfg.ConfigureEndpoints(context);
+                        });
                     });
 
                     services.AddMassTransitHostedService(true);
